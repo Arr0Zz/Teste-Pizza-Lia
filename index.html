@@ -1,0 +1,1034 @@
+// index.tsx - Pizza-Lia - Pizzaria da Família
+import React, { useState, useRef, useEffect } from 'react';
+
+// Tipos
+interface TamanhoPreco {
+  "8": string;
+  "10": string;
+  "12": string;
+}
+
+interface PizzaSalgada {
+  nome: string;
+  descricao: string;
+  tamanhos: string[];
+  precos: TamanhoPreco;
+  imagens: string[];
+}
+
+interface PizzaDoce {
+  nome: string;
+  descricao: string;
+  preco: string;
+  imagens: string[];
+}
+
+interface Bebida {
+  nome: string;
+  preco: string;
+  imagem: string;
+}
+
+interface Extra {
+  nome: string;
+  imagem: string;
+}
+
+interface ItemCarrinho {
+  id: string;
+  nome: string;
+  tipo: string;
+  tamanho?: string;
+  preco: string;
+  quantidade: number;
+}
+
+// Dados editáveis (mantidos entre colchetes conforme solicitado)
+const DADOS = {
+  slogan: "[a pizzaria da família]",
+  whatsapp: "[XX XXXXX-XXXX]",
+  pizzasSalgadas: [
+    {
+      nome: "[Calabresa]",
+      descricao: "[Molho, mussarela, calabresa e cebola]",
+      tamanhos: ["8", "10", "12"],
+      precos: { "8": "[45.00]", "10": "[55.00]", "12": "[65.00]" },
+      imagens: ["[calabresa1.png]", "[calabresa2.png]", "[calabresa3.png]"]
+    },
+    {
+      nome: "[Marguerita]",
+      descricao: "[Molho, mussarela, tomate e manjericão]",
+      tamanhos: ["8", "10", "12"],
+      precos: { "8": "[42.00]", "10": "[52.00]", "12": "[62.00]" },
+      imagens: ["[marguerita1.png]", "[marguerita2.png]", "[marguerita3.png]"]
+    },
+    {
+      nome: "[Frango Catupiry]",
+      descricao: "[Molho, mussarela, frango desfiado e catupiry]",
+      tamanhos: ["8", "10", "12"],
+      precos: { "8": "[48.00]", "10": "[58.00]", "12": "[68.00]" },
+      imagens: ["[frango1.png]", "[frango2.png]", "[frango3.png]"]
+    }
+  ] as PizzaSalgada[],
+  pizzasDoces: [
+    {
+      nome: "[Chocolate]",
+      descricao: "[Chocolate cremoso com granulado]",
+      preco: "[38.00]",
+      imagens: ["[doce-choco1.png]", "[doce-choco2.png]"]
+    },
+    {
+      nome: "[Banana Caramelada]",
+      descricao: "[Banana, canela e leite condensado]",
+      preco: "[36.00]",
+      imagens: ["[doce-banana1.png]", "[doce-banana2.png]"]
+    }
+  ] as PizzaDoce[],
+  bebidas: [
+    { nome: "Refrigerante", preco: "[8.00]", imagem: "[refri.png]" },
+    { nome: "Água", preco: "[4.00]", imagem: "[agua.png]" },
+    { nome: "Suco", preco: "[7.00]", imagem: "[suco.png]" }
+  ] as Bebida[],
+  extras: [
+    { nome: "Chocolate", imagem: "[chocolate.png]" },
+    { nome: "Brownie", imagem: "[brownie.png]" }
+  ] as Extra[]
+};
+
+// Componente do Carrossel
+const Carrossel: React.FC<{ imagens: string[] }> = ({ imagens }) => {
+  const [indiceAtual, setIndiceAtual] = useState(0);
+  const carrosselRef = useRef<HTMLDivElement>(null);
+  const [arrastando, setArrastando] = useState(false);
+  const [inicioX, setInicioX] = useState(0);
+
+  const proxima = () => {
+    setIndiceAtual((prev) => (prev === imagens.length - 1 ? 0 : prev + 1));
+  };
+
+  const anterior = () => {
+    setIndiceAtual((prev) => (prev === 0 ? imagens.length - 1 : prev - 1));
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setArrastando(true);
+    setInicioX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!arrastando) return;
+    setArrastando(false);
+    const fimX = e.changedTouches[0].clientX;
+    const diferenca = inicioX - fimX;
+
+    if (Math.abs(diferenca) > 50) {
+      if (diferenca > 0) proxima();
+      else anterior();
+    }
+  };
+
+  return (
+    <div className="carrossel-container">
+      <div 
+        className="carrossel-imagens"
+        ref={carrosselRef}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        style={{ transform: `translateX(-${indiceAtual * 100}%)` }}
+      >
+        {imagens.map((img, index) => (
+          <div key={index} className="carrossel-slide">
+            <img src={img} alt={`Imagem ${index + 1}`} />
+          </div>
+        ))}
+      </div>
+      {imagens.length > 1 && (
+        <>
+          <button className="carrossel-btn anterior" onClick={anterior}>&lt;</button>
+          <button className="carrossel-btn proximo" onClick={proximo}>&gt;</button>
+          <div className="carrossel-pontos">
+            {imagens.map((_, index) => (
+              <button
+                key={index}
+                className={`ponto ${index === indiceAtual ? 'ativo' : ''}`}
+                onClick={() => setIndiceAtual(index)}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+// Componente Principal
+const App: React.FC = () => {
+  // Estado do carrinho
+  const [carrinhoAberto, setCarrinhoAberto] = useState(false);
+  const [itensCarrinho, setItensCarrinho] = useState<ItemCarrinho[]>([]);
+  const [nomeCliente, setNomeCliente] = useState('');
+  const [endereco, setEndereco] = useState('');
+  const [observacoes, setObservacoes] = useState('');
+
+  // Adicionar item ao carrinho
+  const adicionarAoCarrinho = (item: Omit<ItemCarrinho, 'id' | 'quantidade'>) => {
+    const id = `${item.nome}-${item.tipo}-${item.tamanho || 'unico'}`;
+    setItensCarrinho(prev => {
+      const existe = prev.find(i => i.id === id);
+      if (existe) {
+        return prev.map(i => 
+          i.id === id ? { ...i, quantidade: i.quantidade + 1 } : i
+        );
+      } else {
+        return [...prev, { ...item, id, quantidade: 1 }];
+      }
+    });
+  };
+
+  // Remover item do carrinho
+  const removerDoCarrinho = (id: string) => {
+    setItensCarrinho(prev => prev.filter(item => item.id !== id));
+  };
+
+  // Atualizar quantidade
+  const atualizarQuantidade = (id: string, quantidade: number) => {
+    if (quantidade < 1) {
+      removerDoCarrinho(id);
+      return;
+    }
+    setItensCarrinho(prev =>
+      prev.map(item => item.id === id ? { ...item, quantidade } : item)
+    );
+  };
+
+  // Calcular total
+  const calcularTotal = () => {
+    return itensCarrinho.reduce((total, item) => {
+      const preco = parseFloat(item.preco.replace('[', '').replace(']', ''));
+      return total + (preco * item.quantidade);
+    }, 0).toFixed(2);
+  };
+
+  // Gerar mensagem do WhatsApp
+  const gerarMensagemWhatsApp = () => {
+    const numero = DADOS.whatsapp.replace(/\D/g, '');
+    const itensTexto = itensCarrinho.map(item =>
+      `• ${item.quantidade}x ${item.nome}${item.tamanho ? ` (${item.tamanho} fatias)` : ''} - R$ ${item.preco.replace('[', '').replace(']', '')}`
+    ).join('\n');
+    
+    const mensagem = `*Pedido Pizza-Lia*
+    
+*Cliente:* ${nomeCliente}
+*Endereço:* ${endereco}
+${observacoes ? `*Observações:* ${observacoes}\n` : ''}
+*Itens do Pedido:*
+${itensTexto}
+
+*Total: R$ ${calcularTotal()}*
+
+Agradecemos pela preferência! 🍕`;
+    
+    return `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
+  };
+
+  return (
+    <div className="app">
+      {/* Header */}
+      <header className="header">
+        <div className="container header-container">
+          <img src="[logo.png]" alt="Pizza-Lia" className="logo" />
+          <h1 className="slogan">{DADOS.slogan}</h1>
+          <button 
+            className="carrinho-btn-header"
+            onClick={() => setCarrinhoAberto(true)}
+          >
+            <span className="carrinho-icon">🛒</span>
+            {itensCarrinho.length > 0 && (
+              <span className="carrinho-badge">{itensCarrinho.length}</span>
+            )}
+          </button>
+        </div>
+      </header>
+
+      {/* Hero Banner */}
+      <section className="hero">
+        <img src="[fachada.png]" alt="Fachada da Pizza-Lia" className="hero-banner" />
+      </section>
+
+      {/* Conteúdo Principal */}
+      <main className="main-content">
+        {/* Pizzas Salgadas */}
+        <section className="secao">
+          <h2 className="secao-titulo">🍕 Nossas Pizzas</h2>
+          <div className="cards-container">
+            {DADOS.pizzasSalgadas.map((pizza, index) => (
+              <div key={index} className="card">
+                <Carrossel imagens={pizza.imagens} />
+                <div className="card-conteudo">
+                  <h3>{pizza.nome}</h3>
+                  <p className="descricao">{pizza.descricao}</p>
+                  <div className="tamanhos-container">
+                    {pizza.tamanhos.map(tamanho => (
+                      <button
+                        key={tamanho}
+                        className="tamanho-btn"
+                        onClick={() => adicionarAoCarrinho({
+                          nome: `${pizza.nome} - ${tamanho} fatias`,
+                          tipo: 'pizza_salgada',
+                          tamanho,
+                          preco: pizza.precos[tamanho as keyof TamanhoPreco]
+                        })}
+                      >
+                        <span>{tamanho} fatias</span>
+                        <span className="preco">{pizza.precos[tamanho as keyof TamanhoPreco]}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Pizzas Doces */}
+        <section className="secao">
+          <h2 className="secao-titulo">🍫 Pizzas Doces</h2>
+          <div className="cards-container">
+            {DADOS.pizzasDoces.map((pizza, index) => (
+              <div key={index} className="card">
+                <Carrossel imagens={pizza.imagens} />
+                <div className="card-conteudo">
+                  <h3>{pizza.nome}</h3>
+                  <p className="descricao">{pizza.descricao}</p>
+                  <button
+                    className="adicionar-btn"
+                    onClick={() => adicionarAoCarrinho({
+                      nome: `${pizza.nome} - 6 fatias`,
+                      tipo: 'pizza_doce',
+                      preco: pizza.preco
+                    })}
+                  >
+                    <span>6 fatias - {pizza.preco}</span>
+                    <span>+ Adicionar</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Bebidas */}
+        <section className="secao">
+          <h2 className="secao-titulo">🥤 Bebidas</h2>
+          <div className="cards-container horizontal">
+            {DADOS.bebidas.map((bebida, index) => (
+              <div key={index} className="card-bebida">
+                <img src={bebida.imagem} alt={bebida.nome} />
+                <div className="card-bebida-conteudo">
+                  <h4>{bebida.nome}</h4>
+                  <div className="bebida-acoes">
+                    <span className="preco">{bebida.preco}</span>
+                    <button
+                      className="btn-pequeno"
+                      onClick={() => adicionarAoCarrinho({
+                        nome: bebida.nome,
+                        tipo: 'bebida',
+                        preco: bebida.preco
+                      })}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Extras */}
+        <section className="secao">
+          <h2 className="secao-titulo">✨ Extras</h2>
+          <div className="cards-container horizontal">
+            {DADOS.extras.map((extra, index) => (
+              <div key={index} className="card-extra">
+                <img src={extra.imagem} alt={extra.nome} />
+                <h4>{extra.nome}</h4>
+                <button
+                  className="btn-pequeno"
+                  onClick={() => adicionarAoCarrinho({
+                    nome: extra.nome,
+                    tipo: 'extra',
+                    preco: '[5.00]'
+                  })}
+                >
+                  Adicionar
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Provas Sociais */}
+        <section className="secao">
+          <h2 className="secao-titulo">O que dizem nossos clientes</h2>
+          <div className="provas-sociais">
+            <div className="prova-item">
+              <img src="[cliente-img.png]" alt="Cliente satisfeito" />
+            </div>
+            <div className="prova-item">
+              <video controls>
+                <source src="[cliente-video1.mp4]" type="video/mp4" />
+              </video>
+            </div>
+            <div className="prova-item">
+              <video controls>
+                <source src="[cliente-video2.mp4]" type="video/mp4" />
+              </video>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* Carrinho Sidebar */}
+      <div className={`carrinho-overlay ${carrinhoAberto ? 'aberto' : ''}`} 
+           onClick={() => setCarrinhoAberto(false)}>
+      </div>
+      <aside className={`carrinho-sidebar ${carrinhoAberto ? 'aberto' : ''}`}>
+        <div className="carrinho-cabecalho">
+          <h2>🛒 Seu Pedido</h2>
+          <button className="fechar-btn" onClick={() => setCarrinhoAberto(false)}>×</button>
+        </div>
+        
+        <div className="carrinho-conteudo">
+          <div className="form-pedido">
+            <input
+              type="text"
+              placeholder="Seu nome"
+              value={nomeCliente}
+              onChange={(e) => setNomeCliente(e.target.value)}
+              className="input"
+            />
+            <input
+              type="text"
+              placeholder="Endereço completo"
+              value={endereco}
+              onChange={(e) => setEndereco(e.target.value)}
+              className="input"
+            />
+            <textarea
+              placeholder="Observações do pedido"
+              value={observacoes}
+              onChange={(e) => setObservacoes(e.target.value)}
+              className="textarea"
+              rows={3}
+            />
+          </div>
+
+          <div className="itens-carrinho">
+            <h3>Itens ({itensCarrinho.length})</h3>
+            {itensCarrinho.length === 0 ? (
+              <p className="carrinho-vazio">Seu carrinho está vazio</p>
+            ) : (
+              <div className="lista-itens">
+                {itensCarrinho.map(item => (
+                  <div key={item.id} className="item-carrinho">
+                    <div className="item-info">
+                      <h4>{item.nome}</h4>
+                      <span className="item-preco">R$ {item.preco.replace('[', '').replace(']', '')}</span>
+                    </div>
+                    <div className="item-controles">
+                      <button onClick={() => atualizarQuantidade(item.id, item.quantidade - 1)}>-</button>
+                      <span>{item.quantidade}</span>
+                      <button onClick={() => atualizarQuantidade(item.id, item.quantidade + 1)}>+</button>
+                      <button 
+                        className="remover-btn"
+                        onClick={() => removerDoCarrinho(item.id)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {itensCarrinho.length > 0 && (
+            <div className="carrinho-rodape">
+              <div className="total">
+                <span>Total:</span>
+                <span className="total-valor">R$ {calcularTotal()}</span>
+              </div>
+              <a
+                href={gerarMensagemWhatsApp()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="whatsapp-btn"
+                onClick={() => {
+                  if (!nomeCliente || !endereco) {
+                    alert('Por favor, preencha seu nome e endereço!');
+                    return false;
+                  }
+                }}
+              >
+                📞 Finalizar no WhatsApp
+              </a>
+            </div>
+          )}
+        </div>
+      </aside>
+
+      {/* Estilos inline */}
+      <style>{`
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+          background: #fffaf0;
+          color: #333;
+          line-height: 1.6;
+        }
+
+        .app {
+          min-height: 100vh;
+          padding-bottom: 60px;
+        }
+
+        /* Header */
+        .header {
+          background: white;
+          box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+          position: sticky;
+          top: 0;
+          z-index: 100;
+        }
+
+        .header-container {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 1rem;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        .logo {
+          height: 50px;
+          width: auto;
+        }
+
+        .slogan {
+          font-size: 1.2rem;
+          color: #e63946;
+          text-align: center;
+          flex: 1;
+        }
+
+        .carrinho-btn-header {
+          background: none;
+          border: none;
+          font-size: 1.8rem;
+          cursor: pointer;
+          position: relative;
+          padding: 8px;
+        }
+
+        .carrinho-badge {
+          position: absolute;
+          top: 0;
+          right: 0;
+          background: #e63946;
+          color: white;
+          border-radius: 50%;
+          width: 20px;
+          height: 20px;
+          font-size: 0.8rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        /* Hero */
+        .hero {
+          width: 100%;
+          overflow: hidden;
+        }
+
+        .hero-banner {
+          width: 100%;
+          height: 300px;
+          object-fit: cover;
+        }
+
+        /* Seções */
+        .secao {
+          max-width: 1200px;
+          margin: 3rem auto;
+          padding: 0 1rem;
+        }
+
+        .secao-titulo {
+          font-size: 2rem;
+          margin-bottom: 2rem;
+          color: #2a2a2a;
+          text-align: center;
+        }
+
+        /* Cards */
+        .cards-container {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 2rem;
+          margin-top: 2rem;
+        }
+
+        .cards-container.horizontal {
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        .card {
+          background: white;
+          border-radius: 20px;
+          overflow: hidden;
+          box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+          transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+          transform: translateY(-5px);
+        }
+
+        .card-conteudo {
+          padding: 1.5rem;
+        }
+
+        .card h3 {
+          font-size: 1.5rem;
+          margin-bottom: 0.5rem;
+          color: #333;
+        }
+
+        .descricao {
+          color: #666;
+          margin-bottom: 1.5rem;
+          font-size: 0.95rem;
+        }
+
+        /* Carrossel */
+        .carrossel-container {
+          position: relative;
+          overflow: hidden;
+          height: 250px;
+        }
+
+        .carrossel-imagens {
+          display: flex;
+          height: 100%;
+          transition: transform 0.5s ease;
+        }
+
+        .carrossel-slide {
+          min-width: 100%;
+          height: 100%;
+        }
+
+        .carrossel-slide img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .carrossel-btn {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          background: rgba(255,255,255,0.9);
+          border: none;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          font-size: 1.2rem;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+          z-index: 2;
+        }
+
+        .carrossel-btn.anterior {
+          left: 15px;
+        }
+
+        .carrossel-btn.proximo {
+          right: 15px;
+        }
+
+        .carrossel-pontos {
+          position: absolute;
+          bottom: 15px;
+          left: 0;
+          right: 0;
+          display: flex;
+          justify-content: center;
+          gap: 8px;
+          z-index: 2;
+        }
+
+        .ponto {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          border: none;
+          background: rgba(255,255,255,0.5);
+          cursor: pointer;
+          padding: 0;
+        }
+
+        .ponto.ativo {
+          background: white;
+        }
+
+        /* Botões de tamanho */
+        .tamanhos-container {
+          display: flex;
+          gap: 10px;
+          margin-top: 1rem;
+        }
+
+        .tamanho-btn {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 12px;
+          background: #f8f9fa;
+          border: 2px solid #e9ecef;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .tamanho-btn:hover {
+          background: #e63946;
+          color: white;
+          border-color: #e63946;
+        }
+
+        .tamanho-btn .preco {
+          font-weight: bold;
+          margin-top: 4px;
+          color: inherit;
+        }
+
+        /* Cards de bebidas e extras */
+        .card-bebida, .card-extra {
+          background: white;
+          border-radius: 15px;
+          padding: 1.5rem;
+          text-align: center;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .card-bebida img, .card-extra img {
+          width: 100px;
+          height: 100px;
+          object-fit: contain;
+        }
+
+        .card-bebida-conteudo {
+          width: 100%;
+        }
+
+        .bebida-acoes {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 1rem;
+        }
+
+        .preco {
+          font-weight: bold;
+          color: #e63946;
+          font-size: 1.2rem;
+        }
+
+        .btn-pequeno {
+          background: #e63946;
+          color: white;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 50px;
+          cursor: pointer;
+          font-weight: bold;
+          transition: background 0.3s;
+        }
+
+        .btn-pequeno:hover {
+          background: #d62828;
+        }
+
+        /* Provas Sociais */
+        .provas-sociais {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 2rem;
+          margin-top: 2rem;
+        }
+
+        .prova-item {
+          border-radius: 15px;
+          overflow: hidden;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .prova-item img, .prova-item video {
+          width: 100%;
+          height: 300px;
+          object-fit: cover;
+          display: block;
+        }
+
+        /* Carrinho */
+        .carrinho-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0,0,0,0.5);
+          z-index: 999;
+          opacity: 0;
+          visibility: hidden;
+          transition: all 0.3s;
+        }
+
+        .carrinho-overlay.aberto {
+          opacity: 1;
+          visibility: visible;
+        }
+
+        .carrinho-sidebar {
+          position: fixed;
+          top: 0;
+          right: -400px;
+          width: 100%;
+          max-width: 400px;
+          height: 100vh;
+          background: white;
+          box-shadow: -5px 0 30px rgba(0,0,0,0.15);
+          z-index: 1000;
+          display: flex;
+          flex-direction: column;
+          transition: right 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+          .carrinho-sidebar {
+            max-width: 100%;
+          }
+        }
+
+        .carrinho-sidebar.aberto {
+          right: 0;
+        }
+
+        .carrinho-cabecalho {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1.5rem;
+          border-bottom: 2px solid #f8f9fa;
+        }
+
+        .carrinho-cabecalho h2 {
+          font-size: 1.5rem;
+          color: #333;
+        }
+
+        .fechar-btn {
+          background: none;
+          border: none;
+          font-size: 2rem;
+          cursor: pointer;
+          color: #666;
+          line-height: 1;
+        }
+
+        .carrinho-conteudo {
+          flex: 1;
+          overflow-y: auto;
+          padding: 1.5rem;
+        }
+
+        .form-pedido {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          margin-bottom: 2rem;
+        }
+
+        .input, .textarea {
+          padding: 12px;
+          border: 2px solid #e9ecef;
+          border-radius: 10px;
+          font-size: 1rem;
+          transition: border-color 0.3s;
+        }
+
+        .input:focus, .textarea:focus {
+          outline: none;
+          border-color: #e63946;
+        }
+
+        .textarea {
+          resize: vertical;
+        }
+
+        .itens-carrinho h3 {
+          margin-bottom: 1rem;
+          color: #333;
+        }
+
+        .carrinho-vazio {
+          text-align: center;
+          color: #666;
+          padding: 2rem;
+        }
+
+        .item-carrinho {
+          background: #f8f9fa;
+          border-radius: 10px;
+          padding: 1rem;
+          margin-bottom: 1rem;
+        }
+
+        .item-info h4 {
+          font-size: 1rem;
+          margin-bottom: 0.5rem;
+          color: #333;
+        }
+
+        .item-controles {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-top: 0.5rem;
+        }
+
+        .item-controles button {
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          border: 2px solid #e63946;
+          background: white;
+          color: #e63946;
+          font-weight: bold;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .remover-btn {
+          border-color: #dc3545 !important;
+          color: #dc3545 !important;
+          margin-left: auto;
+        }
+
+        .carrinho-rodape {
+          margin-top: auto;
+          padding-top: 1.5rem;
+          border-top: 2px solid #f8f9fa;
+        }
+
+        .total {
+          display: flex;
+          justify-content: space-between;
+          font-size: 1.5rem;
+          font-weight: bold;
+          margin-bottom: 1.5rem;
+        }
+
+        .total-valor {
+          color: #e63946;
+        }
+
+        .whatsapp-btn {
+          display: block;
+          width: 100%;
+          padding: 16px;
+          background: #25D366;
+          color: white;
+          text-align: center;
+          text-decoration: none;
+          border-radius: 10px;
+          font-weight: bold;
+          font-size: 1.1rem;
+          transition: background 0.3s;
+        }
+
+        .whatsapp-btn:hover {
+          background: #128C7E;
+        }
+
+        .adicionar-btn {
+          width: 100%;
+          padding: 15px;
+          background: #e63946;
+          color: white;
+          border: none;
+          border-radius: 12px;
+          font-weight: bold;
+          font-size: 1rem;
+          cursor: pointer;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          transition: background 0.3s;
+          margin-top: 1rem;
+        }
+
+        .adicionar-btn:hover {
+          background: #d62828;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+          .header-container {
+            flex-wrap: wrap;
+          }
+          
+          .slogan {
+            order: 3;
+            flex: 100%;
+            margin-top: 10px;
+            font-size: 1rem;
+          }
+          
+          .cards-container {
+            grid-template-columns: 1fr;
+          }
+          
+          .provas-sociais {
+            grid-template-columns: 1fr;
+          }
+          
+          .hero-banner {
+            height: 200px;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default App;
