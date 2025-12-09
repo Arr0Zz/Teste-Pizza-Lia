@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pizza-Lia | A Pizzaria da Família</title>
+    
+    <!-- TAILWIND CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- CONFIGURAÇÃO TAILWIND -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#D32F2F',
+                            yellow: '#FFC107',
+                            dark: '#121212',
+                            gray: '#F5F5F5'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Roboto', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* CSS CUSTOMIZADO */
+        body {
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+
+        /* Hero Overlay Gradient */
+        .hero-gradient {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.9) 100%);
+        }
+
+        /* Esconder Scrollbar mas manter funcionalidade */
+        .hide-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Snap Scrolling */
+        .snap-scroll-x {
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+        }
+        .snap-child {
+            scroll-snap-align: start;
+        }
+        
+        /* Smooth Fade In */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+    </style>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-brand-gray text-gray-800 font-sans antialiased pb-24">
+
+    <!-- NAVBAR FIXA -->
+    <nav class="fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-black/90 backdrop-blur-sm border-b border-white/10 shadow-lg py-3 px-4 flex justify-between items-center">
+        <!-- Logo -->
+        <div class="flex flex-col leading-none select-none">
+            <span class="font-display font-black text-2xl text-white tracking-wide">PIZZA</span>
+            <span class="font-display font-bold text-xl text-brand-red tracking-widest -mt-1">LIA</span>
+        </div>
+        
+        <!-- Slogan (Desktop Only) -->
+        <div class="hidden md:block text-white/80 italic text-sm font-light">
+            a pizzaria da família
+        </div>
+
+        <!-- Cart Icon -->
+        <button onclick="toggleCart()" class="relative p-2 text-white hover:text-brand-yellow transition-colors group">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            <span id="cart-counter" class="absolute top-0 right-0 bg-brand-yellow text-brand-dark text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full shadow-md transform scale-0 transition-transform duration-200">0</span>
+        </button>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="relative w-full h-[65vh] flex items-center justify-center overflow-hidden">
+        <!-- Imagem de Fundo -->
+        <div class="absolute inset-0 z-0 bg-gray-900">
+            <img src="hero-fachada.png" alt="Fachada Pizza Lia" class="w-full h-full object-cover opacity-80" onerror="handleImageError(this)">
+            <div class="absolute inset-0 hero-gradient"></div>
+        </div>
+        
+        <!-- Conteúdo Hero -->
+        <div class="relative z-10 text-center px-6 mt-12 animate-fade-in">
+            <h2 class="text-brand-yellow font-display font-bold text-lg tracking-widest uppercase mb-2">Bem-vindo à</h2>
+            <h1 class="text-5xl md:text-7xl font-display font-black text-white mb-2 leading-tight drop-shadow-lg">
+                PIZZA<br><span class="text-brand-red">LIA</span>
+            </h1>
+            <p class="text-white/90 text-xl font-light italic">a pizzaria da família</p>
+            <div class="mt-8 w-24 h-1 bg-brand-yellow mx-auto rounded-full"></div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="pt-8 space-y-12">
+
+        <!-- SEÇÃO: PIZZAS SALGADAS -->
+        <section class="pl-4 md:pl-8">
+            <div class="flex items-center gap-3 mb-4 pr-4">
+                <div class="w-1 h-8 bg-brand-red rounded-full"></div>
+                <h2 class="text-2xl font-display font-bold text-gray-900">Pizzas Salgadas</h2>
+            </div>
+            <p class="text-gray-500 text-sm mb-4 pr-4">Escolha o tamanho ideal para sua fome.</p>
+            
+            <!-- Horizontal Carousel -->
+            <div id="container-salgadas" class="flex overflow-x-auto snap-scroll-x gap-4 pb-8 pr-4 hide-scroll">
+                <!-- Items injetados via JS -->
+            </div>
+        </section>
+
+        <!-- SEÇÃO: PIZZAS DOCES -->
+        <section class="pl-4 md:pl-8 bg-white py-8 border-y border-gray-100">
+            <div class="flex items-center gap-3 mb-4 pr-4">
+                <div class="w-1 h-8 bg-brand-yellow rounded-full"></div>
+                <h2 class="text-2xl font-display font-bold text-gray-900">Pizzas Doces</h2>
+            </div>
+            <p class="text-gray-500 text-sm mb-4 pr-4">Sobremesa perfeita. Tamanho único (6 fatias).</p>
+            
+            <div id="container-doces" class="flex overflow-x-auto snap-scroll-x gap-4 pb-4 pr-4 hide-scroll">
+                <!-- Items injetados via JS -->
+            </div>
+        </section>
+
+        <!-- SEÇÃO: BEBIDAS -->
+        <section class="pl-4 md:pl-8">
+            <div class="flex items-center gap-3 mb-4 pr-4">
+                <div class="w-1 h-8 bg-blue-500 rounded-full"></div>
+                <h2 class="text-2xl font-display font-bold text-gray-900">Bebidas</h2>
+            </div>
+            
+            <div id="container-bebidas" class="flex overflow-x-auto snap-scroll-x gap-4 pb-4 pr-4 hide-scroll">
+                <!-- Items injetados via JS -->
+            </div>
+        </section>
+
+        <!-- SEÇÃO: EXTRAS -->
+        <section class="pl-4 md:pl-8 bg-brand-red/5 py-8 border-y border-brand-red/10">
+            <div class="flex items-center gap-3 mb-4 pr-4">
+                <div class="w-1 h-8 bg-brand-red rounded-full"></div>
+                <h2 class="text-2xl font-display font-bold text-gray-900">Turbine seu pedido</h2>
+            </div>
+            
+            <div id="container-extras" class="flex overflow-x-auto snap-scroll-x gap-4 pb-4 pr-4 hide-scroll">
+                <!-- Items injetados via JS -->
+            </div>
+        </section>
+
+        <!-- SEÇÃO: DEPOIMENTOS (SOCIAL PROOF) -->
+        <section class="px-4 md:px-8 pb-8">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-display font-bold text-gray-900">O que dizem nossos clientes ❤️</h2>
+                <div class="w-16 h-1 bg-brand-yellow mx-auto mt-2 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Video 1 -->
+                <div class="bg-white p-2 rounded-xl shadow-lg">
+                    <video controls class="w-full rounded-lg aspect-video bg-black object-cover" poster="hero-fachada.png">
+                        <source src="video1.mp4" type="video/mp4">
+                        Seu navegador não suporta vídeo.
+                    </video>
+                    <p class="text-center mt-3 font-medium text-gray-700">"Melhor massa da cidade!"</p>
+                </div>
+
+                <!-- Video 2 -->
+                <div class="bg-white p-2 rounded-xl shadow-lg">
+                    <video controls class="w-full rounded-lg aspect-video bg-black object-cover" poster="hero-fachada.png">
+                        <source src="video2.mp4" type="video/mp4">
+                        Seu navegador não suporta vídeo.
+                    </video>
+                    <p class="text-center mt-3 font-medium text-gray-700">"Chegou super rápido e quente."</p>
+                </div>
+
+                <!-- Foto Cliente -->
+                <div class="bg-white p-2 rounded-xl shadow-lg flex flex-col items-center">
+                    <div class="w-full aspect-video rounded-lg overflow-hidden relative bg-gray-100 flex items-center justify-center">
+                        <img src="cliente1.png" alt="Cliente Feliz" class="w-full h-full object-cover" onerror="handleImageError(this)">
+                    </div>
+                    <p class="text-center mt-3 font-medium text-gray-700">"Família reunida e pizza Lia!"</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-brand-dark text-white/50 text-center py-8 px-4 text-xs">
+        <p class="mb-2">Pizza-Lia • A Pizzaria da Família</p>
+        <p>&copy; 2024 Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- CART SIDEBAR (OFF-CANVAS) -->
+    <!-- Overlay -->
+    <div id="cart-overlay" onclick="toggleCart()" class="fixed inset-0 bg-black/60 z-[60] hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm"></div>
+    
+    <!-- Sidebar -->
+    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-[85%] md:w-[400px] bg-white z-[70] transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col">
+        <!-- Header -->
+        <div class="bg-brand-red p-4 flex justify-between items-center shadow-md">
+            <h3 class="text-white font-display font-bold text-xl flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+                Seu Pedido
+            </h3>
+            <button onclick="toggleCart()" class="text-white hover:bg-white/20 p-1 rounded-full transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Items List -->
+        <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-4">
+            <!-- Vazio State injetado via JS -->
+        </div>
+
+        <!-- Checkout Form -->
+        <div id="checkout-area" class="bg-gray-50 p-4 border-t border-gray-200 hidden">
+            <div class="space-y-3 mb-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Seu Nome</label>
+                    <input type="text" id="client-name" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:outline-none" placeholder="Ex: João Silva">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Endereço de Entrega</label>
+                    <input type="text" id="client-address" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:outline-none" placeholder="Rua, Número, Bairro">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Observações</label>
+                    <textarea id="client-notes" rows="2" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:outline-none resize-none" placeholder="Ex: Sem cebola, troco para 50..."></textarea>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-gray-600 font-medium">Total:</span>
+                <span id="cart-total" class="text-2xl font-bold text-brand-red">R$ 0,00</span>
+            </div>
+
+            <button onclick="sendToWhatsapp()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-xl shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.463 1.065 2.876 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                </svg>
+                ENVIAR PEDIDO
+            </button>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 z-[80] transition-all duration-300 opacity-0 translate-y-10 pointer-events-none">
+        <div class="bg-green-500 rounded-full p-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+        <span class="font-medium text-sm">Adicionado à sacola!</span>
+    </div>
+
+    <!-- APP LOGIC -->
+    <script>
+        // === DADOS ===
+        const WHATSAPP_NUMBER = "5511999999999";
+        
+        const menu = {
+            salgadas: [
+                { id: 's1', name: 'Calabresa', img: 'calabresa.png', desc: 'Calabresa fatiada, cebola e azeitonas pretas.', prices: {8: 35, 10: 45, 12: 55} },
+                { id: 's2', name: 'Frango c/ Catupiry', img: 'frango.png', desc: 'Frango desfiado com o autêntico Catupiry.', prices: {8: 38, 10: 48, 12: 60} },
+                { id: 's3', name: 'Marguerita', img: 'marguerita.png', desc: 'Mussarela, rodelas de tomate e manjericão fresco.', prices: {8: 35, 10: 45, 12: 55} },
+                { id: 's4', name: 'Portuguesa', img: 'portuguesa.png', desc: 'Presunto, ovos, cebola, ervilha e mussarela.', prices: {8: 38, 10: 48, 12: 60} }
+            ],
+            doces: [
+                { id: 'd1', name: 'Chocolate', img: 'chocolate.png', desc: 'Chocolate ao leite derretido e granulado.', price: 40 },
+                { id: 'd2', name: 'Banana c/ Canela', img: 'banana.png', desc: 'Banana fatiada, leite condensado e canela.', price: 38 }
+            ],
+            bebidas: [
+                { id: 'b1', name: 'Refrigerante Lata', img: 'refri.png', desc: '350ml - Diversos sabores.', price: 6 },
+                { id: 'b2', name: 'Água Mineral', img: 'agua.png', desc: '500ml - Com ou sem gás.', price: 4 },
+                { id: 'b3', name: 'Suco Natural', img: 'suco.png', desc: '500ml - Laranja ou Limão.', price: 10 }
+            ],
+            extras: [
+                { id: 'e1', name: 'Borda de Chocolate', img: 'extra-choc.png', desc: 'Adicional de borda recheada.', price: 15 },
+                { id: 'e2', name: 'Borda de Catupiry', img: 'extra-cat.png', desc: 'Adicional de borda recheada.', price: 12 }
+            ]
+        };
+
+        // === ESTADO ===
+        let cart = [];
+        let selectedSizes = {}; // Armazena tamanho selecionado para cada ID de pizza salgada
+
+        // === UTILITÁRIOS ===
+        
+        // Função para tratar erro de imagem
+        function handleImageError(img) {
+            img.onerror = null; // Previne loop
+            img.style.display = 'none'; // Esconde a imagem quebrada
+            
+            const parent = img.parentElement;
+            parent.classList.remove('bg-gray-200'); // Remove cor padrão se houver
+            parent.classList.add('bg-gray-100', 'flex', 'items-center', 'justify-center', 'text-center', 'p-4');
+            
+            const fallback = document.createElement('div');
+            fallback.className = "flex flex-col items-center gap-2";
+            fallback.innerHTML = `
+                <span class="text-3xl">🍕</span>
+                <span class="text-gray-400 font-bold text-[10px] uppercase tracking-wider">${img.alt || 'Foto indisponível'}</span>
+            `;
+            parent.appendChild(fallback);
+        }
+
+        // === RENDERIZAÇÃO ===
+        
+        // Render Pizzas Salgadas (Com seletor de tamanho)
+        const containerSalgadas = document.getElementById('container-salgadas');
+        menu.salgadas.forEach(item => {
+            // Default size 8
+            selectedSizes[item.id] = 8;
+            
+            const card = document.createElement('div');
+            card.className = "snap-child min-w-[280px] w-[280px] md:min-w-[320px] bg-white rounded-2xl shadow-md overflow-hidden flex flex-col border border-gray-100";
+            card.innerHTML = `
+                <div class="h-40 bg-gray-200 relative overflow-hidden group">
+                    <img src="${item.img}" alt="${item.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="handleImageError(this)">
+                    <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-3 pt-8">
+                        <h3 class="text-white font-display font-bold text-lg leading-tight shadow-black drop-shadow-md">${item.name}</h3>
+                    </div>
+                </div>
+                <div class="p-4 flex flex-col flex-1 justify-between">
+                    <p class="text-xs text-gray-500 mb-3 h-8 overflow-hidden">${item.desc}</p>
+                    
+                    <!-- Size Selector -->
+                    <div class="flex bg-gray-100 rounded-lg p-1 mb-3 justify-between">
+                        ${[8, 10, 12].map(size => `
+                            <button onclick="changeSize('${item.id}', ${size}, this)" 
+                                class="flex-1 py-1 text-xs font-bold rounded-md transition-all ${size === 8 ? 'bg-white shadow text-brand-red' : 'text-gray-400 hover:text-gray-600'}">
+                                ${size} fat.
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <div class="flex items-center justify-between mt-1">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-gray-400 font-bold uppercase">Preço</span>
+                            <span id="price-${item.id}" class="text-xl font-bold text-gray-800">R$ ${item.prices[8].toFixed(2).replace('.',',')}</span>
+                        </div>
+                        <button onclick="addSalgadaToCart('${item.id}')" class="bg-brand-red hover:bg-red-700 text-white p-2 rounded-full shadow-lg transition-transform active:scale-90">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+            containerSalgadas.appendChild(card);
+        });
+
+        // Helper para renderizar items simples
+        function renderSimpleSection(containerId, items, type) {
+            const container = document.getElementById(containerId);
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "snap-child min-w-[240px] w-[240px] md:min-w-[260px] bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col border border-gray-100";
+                card.innerHTML = `
+                    <div class="h-32 bg-gray-200 relative overflow-hidden group">
+                        <img src="${item.img}" alt="${item.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="handleImageError(this)">
+                    </div>
+                    <div class="p-3 flex flex-col flex-1">
+                        <h3 class="font-bold text-gray-800 text-base leading-tight mb-1">${item.name}</h3>
+                        ${item.desc ? `<p class="text-[10px] text-gray-500 mb-2">${item.desc}</p>` : ''}
+                        
+                        <div class="mt-auto flex items-center justify-between pt-2">
+                            <span class="text-lg font-bold text-brand-red">R$ ${item.price.toFixed(2).replace('.',',')}</span>
+                            <button onclick="addSimpleToCart('${type}', '${item.id}')" class="text-brand-red bg-red-50 hover:bg-brand-red hover:text-white border border-red-100 p-1.5 rounded-lg transition-colors">
+                                <span class="text-xs font-bold uppercase px-1">Adicionar</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        renderSimpleSection('container-doces', menu.doces, 'doces');
+        renderSimpleSection('container-bebidas', menu.bebidas, 'bebidas');
+        renderSimpleSection('container-extras', menu.extras, 'extras');
+
+        // === LÓGICA DO APP ===
+
+        function changeSize(itemId, size, btn) {
+            selectedSizes[itemId] = size;
+            
+            // Update Price UI
+            const item = menu.salgadas.find(i => i.id === itemId);
+            const priceEl = document.getElementById(`price-${itemId}`);
+            priceEl.innerText = `R$ ${item.prices[size].toFixed(2).replace('.',',')}`;
+
+            // Update Buttons UI
+            const parent = btn.parentElement;
+            Array.from(parent.children).forEach(b => {
+                b.classList.remove('bg-white', 'shadow', 'text-brand-red');
+                b.classList.add('text-gray-400');
+            });
+            btn.classList.remove('text-gray-400');
+            btn.classList.add('bg-white', 'shadow', 'text-brand-red');
+        }
+
+        function addSalgadaToCart(id) {
+            const item = menu.salgadas.find(i => i.id === id);
+            const size = selectedSizes[id];
+            const price = item.prices[size];
+            
+            addToCart({
+                uid: Date.now(), // unique ID for cart item
+                name: `${item.name} (${size} fat.)`,
+                price: price,
+                obs: ''
+            });
+        }
+
+        function addSimpleToCart(type, id) {
+            const item = menu[type].find(i => i.id === id);
+            addToCart({
+                uid: Date.now(),
+                name: item.name,
+                price: item.price,
+                obs: ''
+            });
+        }
+
+        function addToCart(cartItem) {
+            cart.push(cartItem);
+            updateCartUI();
+            showToast();
+        }
+
+        function removeFromCart(uid) {
+            cart = cart.filter(item => item.uid !== uid);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const counter = document.getElementById('cart-counter');
+            const list = document.getElementById('cart-items');
+            const checkoutArea = document.getElementById('checkout-area');
+            const totalEl = document.getElementById('cart-total');
+
+            // Update Counter
+            counter.innerText = cart.length;
+            if(cart.length > 0) counter.classList.remove('scale-0');
+            else counter.classList.add('scale-0');
+
+            // Update List
+            // Safe clean
+            list.innerHTML = '';
+            
+            if (cart.length === 0) {
+                // Render Empty State via HTML string
+                list.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-gray-400 space-y-4 animate-fade-in">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <p>Sua sacola está vazia.</p>
+                        <button onclick="toggleCart()" class="text-brand-red font-bold underline">Ver Cardápio</button>
+                    </div>
+                `;
+                checkoutArea.classList.add('hidden');
+            } else {
+                checkoutArea.classList.remove('hidden');
+                
+                // Re-render items
+                list.innerHTML = cart.map(item => `
+                    <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-100 animate-fade-in">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-gray-800 text-sm">${item.name}</h4>
+                            <span class="text-brand-red font-semibold text-xs">R$ ${item.price.toFixed(2).replace('.',',')}</span>
+                        </div>
+                        <button onclick="removeFromCart(${item.uid})" class="text-gray-400 hover:text-red-500 p-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            // Update Total
+            const total = cart.reduce((acc, item) => acc + item.price, 0);
+            totalEl.innerText = `R$ ${total.toFixed(2).replace('.',',')}`;
+        }
+
+        // === UI INTERACTIONS ===
+
+        function toggleCart() {
+            const sidebar = document.getElementById('cart-sidebar');
+            const overlay = document.getElementById('cart-overlay');
+            const isOpen = !sidebar.classList.contains('translate-x-full');
+
+            if (isOpen) {
+                sidebar.classList.add('translate-x-full');
+                overlay.classList.remove('opacity-100');
+                setTimeout(() => {
+                    overlay.classList.add('hidden');
+                }, 300);
+            } else {
+                overlay.classList.remove('hidden');
+                // Force reflow
+                void overlay.offsetWidth; 
+                overlay.classList.add('opacity-100');
+                sidebar.classList.remove('translate-x-full');
+            }
+            
+            // Check UI State on Open
+            updateCartUI();
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('opacity-0', 'translate-y-10');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-10');
+            }, 2000);
+        }
+
+        function sendToWhatsapp() {
+            if (cart.length === 0) return;
+
+            const name = document.getElementById('client-name').value.trim();
+            const address = document.getElementById('client-address').value.trim();
+            const notes = document.getElementById('client-notes').value.trim();
+
+            if (!name || !address) {
+                alert('Por favor, preencha seu Nome e Endereço.');
+                return;
+            }
+
+            let message = `*NOVO PEDIDO - PIZZA LIA* 🍕\n\n`;
+            message += `*Cliente:* ${name}\n`;
+            message += `*Endereço:* ${address}\n`;
+            if(notes) message += `*Obs:* ${notes}\n`;
+            message += `\n-------------------------------\n`;
+            
+            cart.forEach(item => {
+                message += `• ${item.name} - R$ ${item.price.toFixed(2).replace('.',',')}\n`;
+            });
+
+            const total = cart.reduce((acc, item) => acc + item.price, 0);
+            message += `-------------------------------\n`;
+            message += `*TOTAL: R$ ${total.toFixed(2).replace('.',',')}*\n`;
+            message += `\nAguardo confirmação!`;
+
+            const encodedMessage = encodeURIComponent(message);
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`, '_blank');
+        }
+        
+        // Inicialização
+        updateCartUI();
+    </script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
