@@ -129,9 +129,117 @@
             </div>
             <p class="text-gray-500 text-sm mb-4 pr-4">Escolha o tamanho ideal para sua fome.</p>
             
-            <!-- Horizontal Carousel -->
+            <!-- Horizontal Carousel (Static HTML) -->
             <div id="container-salgadas" class="flex overflow-x-auto snap-scroll-x gap-4 pb-8 pr-4 hide-scroll">
-                <!-- Items injetados via JS -->
+                
+                <!-- Calabresa -->
+                <div class="snap-child min-w-[280px] w-[280px] md:min-w-[320px] bg-white rounded-2xl shadow-md overflow-hidden flex flex-col border border-gray-100">
+                    <div class="h-40 bg-gray-200 relative overflow-hidden group">
+                        <img src="calabresa.png" alt="Calabresa" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="handleImageError(this)">
+                        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-3 pt-8">
+                            <h3 class="text-white font-display font-bold text-lg leading-tight shadow-black drop-shadow-md">Calabresa</h3>
+                        </div>
+                    </div>
+                    <div class="p-4 flex flex-col flex-1 justify-between">
+                        <p class="text-xs text-gray-500 mb-3 h-8 overflow-hidden">Calabresa fatiada, cebola e azeitonas pretas.</p>
+                        <div class="flex bg-gray-100 rounded-lg p-1 mb-3 justify-between">
+                            <button onclick="changeSize('s1', 8, this)" class="flex-1 py-1 text-xs font-bold rounded-md transition-all bg-white shadow text-brand-red">8 fat.</button>
+                            <button onclick="changeSize('s1', 10, this)" class="flex-1 py-1 text-xs font-bold rounded-md transition-all text-gray-400 hover:text-gray-600">10 fat.</button>
+                            <button onclick="changeSize('s1', 12, this)" class="flex-1 py-1 text-xs font-bold rounded-md transition-all text-gray-400 hover:text-gray-600">12 fat.</button>
+                        </div>
+                        <div class="flex items-center justify-between mt-1">
+                            <div class="flex flex-col">
+                                <span class="text-[10px] text-gray-400 font-bold uppercase">Preço</span>
+                                <span id="price-s1" class="text-xl font-bold text-gray-800">R$ 35,00</span>
+                            </div>
+                            <button onclick="addSalgadaToCart('s1')" class="bg-brand-red hover:bg-red-700 text-white p-2 rounded-full shadow-lg transition-transform active:scale-90">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Frango -->
+                <div class="snap-child min-w-[280px] w-[280px] md:min-w-[320px] bg-white rounded-2xl shadow-md overflow-hidden flex flex-col border border-gray-100">
+                    <div class="h-40 bg-gray-200 relative overflow-hidden group">
+                        <img src="frango.png" alt="Frango c/ Catupiry" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="handleImageError(this)">
+                        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-3 pt-8">
+                            <h3 class="text-white font-display font-bold text-lg leading-tight shadow-black drop-shadow-md">Frango c/ Catupiry</h3>
+                        </div>
+                    </div>
+                    <div class="p-4 flex flex-col flex-1 justify-between">
+                        <p class="text-xs text-gray-500 mb-3 h-8 overflow-hidden">Frango desfiado com o autêntico Catupiry.</p>
+                        <div class="flex bg-gray-100 rounded-lg p-1 mb-3 justify-between">
+                            <button onclick="changeSize('s2', 8, this)" class="flex-1 py-1 text-xs font-bold rounded-md transition-all bg-white shadow text-brand-red">8 fat.</button>
+                            <button onclick="changeSize('s2', 10, this)" class="flex-1 py-1 text-xs font-bold rounded-md transition-all text-gray-400 hover:text-gray-600">10 fat.</button>
+                            <button onclick="changeSize('s2', 12, this)" class="flex-1 py-1 text-xs font-bold rounded-md transition-all text-gray-400 hover:text-gray-600">12 fat.</button>
+                        </div>
+                        <div class="flex items-center justify-between mt-1">
+                            <div class="flex flex-col">
+                                <span class="text-[10px] text-gray-400 font-bold uppercase">Preço</span>
+                                <span id="price-s2" class="text-xl font-bold text-gray-800">R$ 38,00</span>
+                            </div>
+                            <button onclick="addSalgadaToCart('s2')" class="bg-brand-red hover:bg-red-700 text-white p-2 rounded-full shadow-lg transition-transform active:scale-90">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Marguerita -->
+                <div class="snap-child min-w-[280px] w-[280px] md:min-w-[320px] bg-white rounded-2xl shadow-md overflow-hidden flex flex-col border border-gray-100">
+                    <div class="h-40 bg-gray-200 relative overflow-hidden group">
+                        <img src="marguerita.png" alt="Marguerita" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="handleImageError(this)">
+                        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-3 pt-8">
+                            <h3 class="text-white font-display font-bold text-lg leading-tight shadow-black drop-shadow-md">Marguerita</h3>
+                        </div>
+                    </div>
+                    <div class="p-4 flex flex-col flex-1 justify-between">
+                        <p class="text-xs text-gray-500 mb-3 h-8 overflow-hidden">Mussarela, rodelas de tomate e manjericão fresco.</p>
+                        <div class="flex bg-gray-100 rounded-lg p-1 mb-3 justify-between">
+                            <button onclick="changeSize('s3', 8, this)" class="flex-1 py-1 text-xs font-bold rounded-md transition-all bg-white shadow text-brand-red">8 fat.</button>
+                            <button onclick="changeSize('s3', 10, this)" class="flex-1 py-1 text-xs font-bold rounded-md transition-all text-gray-400 hover:text-gray-600">10 fat.</button>
+                            <button onclick="changeSize('s3', 12, this)" class="flex-1 py-1 text-xs font-bold rounded-md transition-all text-gray-400 hover:text-gray-600">12 fat.</button>
+                        </div>
+                        <div class="flex items-center justify-between mt-1">
+                            <div class="flex flex-col">
+                                <span class="text-[10px] text-gray-400 font-bold uppercase">Preço</span>
+                                <span id="price-s3" class="text-xl font-bold text-gray-800">R$ 35,00</span>
+                            </div>
+                            <button onclick="addSalgadaToCart('s3')" class="bg-brand-red hover:bg-red-700 text-white p-2 rounded-full shadow-lg transition-transform active:scale-90">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Portuguesa -->
+                <div class="snap-child min-w-[280px] w-[280px] md:min-w-[320px] bg-white rounded-2xl shadow-md overflow-hidden flex flex-col border border-gray-100">
+                    <div class="h-40 bg-gray-200 relative overflow-hidden group">
+                        <img src="portuguesa.png" alt="Portuguesa" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="handleImageError(this)">
+                        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-3 pt-8">
+                            <h3 class="text-white font-display font-bold text-lg leading-tight shadow-black drop-shadow-md">Portuguesa</h3>
+                        </div>
+                    </div>
+                    <div class="p-4 flex flex-col flex-1 justify-between">
+                        <p class="text-xs text-gray-500 mb-3 h-8 overflow-hidden">Presunto, ovos, cebola, ervilha e mussarela.</p>
+                        <div class="flex bg-gray-100 rounded-lg p-1 mb-3 justify-between">
+                            <button onclick="changeSize('s4', 8, this)" class="flex-1 py-1 text-xs font-bold rounded-md transition-all bg-white shadow text-brand-red">8 fat.</button>
+                            <button onclick="changeSize('s4', 10, this)" class="flex-1 py-1 text-xs font-bold rounded-md transition-all text-gray-400 hover:text-gray-600">10 fat.</button>
+                            <button onclick="changeSize('s4', 12, this)" class="flex-1 py-1 text-xs font-bold rounded-md transition-all text-gray-400 hover:text-gray-600">12 fat.</button>
+                        </div>
+                        <div class="flex items-center justify-between mt-1">
+                            <div class="flex flex-col">
+                                <span class="text-[10px] text-gray-400 font-bold uppercase">Preço</span>
+                                <span id="price-s4" class="text-xl font-bold text-gray-800">R$ 38,00</span>
+                            </div>
+                            <button onclick="addSalgadaToCart('s4')" class="bg-brand-red hover:bg-red-700 text-white p-2 rounded-full shadow-lg transition-transform active:scale-90">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -144,7 +252,41 @@
             <p class="text-gray-500 text-sm mb-4 pr-4">Sobremesa perfeita. Tamanho único (6 fatias).</p>
             
             <div id="container-doces" class="flex overflow-x-auto snap-scroll-x gap-4 pb-4 pr-4 hide-scroll">
-                <!-- Items injetados via JS -->
+                
+                <!-- Chocolate -->
+                <div class="snap-child min-w-[240px] w-[240px] md:min-w-[260px] bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col border border-gray-100">
+                    <div class="h-32 bg-gray-200 relative overflow-hidden group">
+                        <img src="chocolate.png" alt="Chocolate" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="handleImageError(this)">
+                    </div>
+                    <div class="p-3 flex flex-col flex-1">
+                        <h3 class="font-bold text-gray-800 text-base leading-tight mb-1">Chocolate</h3>
+                        <p class="text-[10px] text-gray-500 mb-2">Chocolate ao leite derretido e granulado.</p>
+                        <div class="mt-auto flex items-center justify-between pt-2">
+                            <span class="text-lg font-bold text-brand-red">R$ 40,00</span>
+                            <button onclick="addSimpleToCart('doces', 'd1')" class="text-brand-red bg-red-50 hover:bg-brand-red hover:text-white border border-red-100 p-1.5 rounded-lg transition-colors">
+                                <span class="text-xs font-bold uppercase px-1">Adicionar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Banana -->
+                <div class="snap-child min-w-[240px] w-[240px] md:min-w-[260px] bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col border border-gray-100">
+                    <div class="h-32 bg-gray-200 relative overflow-hidden group">
+                        <img src="banana.png" alt="Banana c/ Canela" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="handleImageError(this)">
+                    </div>
+                    <div class="p-3 flex flex-col flex-1">
+                        <h3 class="font-bold text-gray-800 text-base leading-tight mb-1">Banana c/ Canela</h3>
+                        <p class="text-[10px] text-gray-500 mb-2">Banana fatiada, leite condensado e canela.</p>
+                        <div class="mt-auto flex items-center justify-between pt-2">
+                            <span class="text-lg font-bold text-brand-red">R$ 38,00</span>
+                            <button onclick="addSimpleToCart('doces', 'd2')" class="text-brand-red bg-red-50 hover:bg-brand-red hover:text-white border border-red-100 p-1.5 rounded-lg transition-colors">
+                                <span class="text-xs font-bold uppercase px-1">Adicionar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -156,7 +298,58 @@
             </div>
             
             <div id="container-bebidas" class="flex overflow-x-auto snap-scroll-x gap-4 pb-4 pr-4 hide-scroll">
-                <!-- Items injetados via JS -->
+                
+                <!-- Refri -->
+                <div class="snap-child min-w-[240px] w-[240px] md:min-w-[260px] bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col border border-gray-100">
+                    <div class="h-32 bg-gray-200 relative overflow-hidden group">
+                        <img src="refri.png" alt="Refrigerante Lata" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="handleImageError(this)">
+                    </div>
+                    <div class="p-3 flex flex-col flex-1">
+                        <h3 class="font-bold text-gray-800 text-base leading-tight mb-1">Refrigerante Lata</h3>
+                        <p class="text-[10px] text-gray-500 mb-2">350ml - Diversos sabores.</p>
+                        <div class="mt-auto flex items-center justify-between pt-2">
+                            <span class="text-lg font-bold text-brand-red">R$ 6,00</span>
+                            <button onclick="addSimpleToCart('bebidas', 'b1')" class="text-brand-red bg-red-50 hover:bg-brand-red hover:text-white border border-red-100 p-1.5 rounded-lg transition-colors">
+                                <span class="text-xs font-bold uppercase px-1">Adicionar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agua -->
+                <div class="snap-child min-w-[240px] w-[240px] md:min-w-[260px] bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col border border-gray-100">
+                    <div class="h-32 bg-gray-200 relative overflow-hidden group">
+                        <img src="agua.png" alt="Água Mineral" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="handleImageError(this)">
+                    </div>
+                    <div class="p-3 flex flex-col flex-1">
+                        <h3 class="font-bold text-gray-800 text-base leading-tight mb-1">Água Mineral</h3>
+                        <p class="text-[10px] text-gray-500 mb-2">500ml - Com ou sem gás.</p>
+                        <div class="mt-auto flex items-center justify-between pt-2">
+                            <span class="text-lg font-bold text-brand-red">R$ 4,00</span>
+                            <button onclick="addSimpleToCart('bebidas', 'b2')" class="text-brand-red bg-red-50 hover:bg-brand-red hover:text-white border border-red-100 p-1.5 rounded-lg transition-colors">
+                                <span class="text-xs font-bold uppercase px-1">Adicionar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suco -->
+                <div class="snap-child min-w-[240px] w-[240px] md:min-w-[260px] bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col border border-gray-100">
+                    <div class="h-32 bg-gray-200 relative overflow-hidden group">
+                        <img src="suco.png" alt="Suco Natural" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="handleImageError(this)">
+                    </div>
+                    <div class="p-3 flex flex-col flex-1">
+                        <h3 class="font-bold text-gray-800 text-base leading-tight mb-1">Suco Natural</h3>
+                        <p class="text-[10px] text-gray-500 mb-2">500ml - Laranja ou Limão.</p>
+                        <div class="mt-auto flex items-center justify-between pt-2">
+                            <span class="text-lg font-bold text-brand-red">R$ 10,00</span>
+                            <button onclick="addSimpleToCart('bebidas', 'b3')" class="text-brand-red bg-red-50 hover:bg-brand-red hover:text-white border border-red-100 p-1.5 rounded-lg transition-colors">
+                                <span class="text-xs font-bold uppercase px-1">Adicionar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -168,7 +361,41 @@
             </div>
             
             <div id="container-extras" class="flex overflow-x-auto snap-scroll-x gap-4 pb-4 pr-4 hide-scroll">
-                <!-- Items injetados via JS -->
+                
+                <!-- Borda Choc -->
+                <div class="snap-child min-w-[240px] w-[240px] md:min-w-[260px] bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col border border-gray-100">
+                    <div class="h-32 bg-gray-200 relative overflow-hidden group">
+                        <img src="extra-choc.png" alt="Borda de Chocolate" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="handleImageError(this)">
+                    </div>
+                    <div class="p-3 flex flex-col flex-1">
+                        <h3 class="font-bold text-gray-800 text-base leading-tight mb-1">Borda de Chocolate</h3>
+                        <p class="text-[10px] text-gray-500 mb-2">Adicional de borda recheada.</p>
+                        <div class="mt-auto flex items-center justify-between pt-2">
+                            <span class="text-lg font-bold text-brand-red">R$ 15,00</span>
+                            <button onclick="addSimpleToCart('extras', 'e1')" class="text-brand-red bg-red-50 hover:bg-brand-red hover:text-white border border-red-100 p-1.5 rounded-lg transition-colors">
+                                <span class="text-xs font-bold uppercase px-1">Adicionar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Borda Catupiry -->
+                <div class="snap-child min-w-[240px] w-[240px] md:min-w-[260px] bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col border border-gray-100">
+                    <div class="h-32 bg-gray-200 relative overflow-hidden group">
+                        <img src="extra-cat.png" alt="Borda de Catupiry" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="handleImageError(this)">
+                    </div>
+                    <div class="p-3 flex flex-col flex-1">
+                        <h3 class="font-bold text-gray-800 text-base leading-tight mb-1">Borda de Catupiry</h3>
+                        <p class="text-[10px] text-gray-500 mb-2">Adicional de borda recheada.</p>
+                        <div class="mt-auto flex items-center justify-between pt-2">
+                            <span class="text-lg font-bold text-brand-red">R$ 12,00</span>
+                            <button onclick="addSimpleToCart('extras', 'e2')" class="text-brand-red bg-red-50 hover:bg-brand-red hover:text-white border border-red-100 p-1.5 rounded-lg transition-colors">
+                                <span class="text-xs font-bold uppercase px-1">Adicionar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -288,31 +515,35 @@
         // === DADOS ===
         const WHATSAPP_NUMBER = "5511999999999";
         
+        // Mantido apenas para lógica de adição ao carrinho e preços
         const menu = {
             salgadas: [
-                { id: 's1', name: 'Calabresa', img: 'calabresa.png', desc: 'Calabresa fatiada, cebola e azeitonas pretas.', prices: {8: 35, 10: 45, 12: 55} },
-                { id: 's2', name: 'Frango c/ Catupiry', img: 'frango.png', desc: 'Frango desfiado com o autêntico Catupiry.', prices: {8: 38, 10: 48, 12: 60} },
-                { id: 's3', name: 'Marguerita', img: 'marguerita.png', desc: 'Mussarela, rodelas de tomate e manjericão fresco.', prices: {8: 35, 10: 45, 12: 55} },
-                { id: 's4', name: 'Portuguesa', img: 'portuguesa.png', desc: 'Presunto, ovos, cebola, ervilha e mussarela.', prices: {8: 38, 10: 48, 12: 60} }
+                { id: 's1', name: 'Calabresa', prices: {8: 35, 10: 45, 12: 55} },
+                { id: 's2', name: 'Frango c/ Catupiry', prices: {8: 38, 10: 48, 12: 60} },
+                { id: 's3', name: 'Marguerita', prices: {8: 35, 10: 45, 12: 55} },
+                { id: 's4', name: 'Portuguesa', prices: {8: 38, 10: 48, 12: 60} }
             ],
             doces: [
-                { id: 'd1', name: 'Chocolate', img: 'chocolate.png', desc: 'Chocolate ao leite derretido e granulado.', price: 40 },
-                { id: 'd2', name: 'Banana c/ Canela', img: 'banana.png', desc: 'Banana fatiada, leite condensado e canela.', price: 38 }
+                { id: 'd1', name: 'Chocolate', price: 40 },
+                { id: 'd2', name: 'Banana c/ Canela', price: 38 }
             ],
             bebidas: [
-                { id: 'b1', name: 'Refrigerante Lata', img: 'refri.png', desc: '350ml - Diversos sabores.', price: 6 },
-                { id: 'b2', name: 'Água Mineral', img: 'agua.png', desc: '500ml - Com ou sem gás.', price: 4 },
-                { id: 'b3', name: 'Suco Natural', img: 'suco.png', desc: '500ml - Laranja ou Limão.', price: 10 }
+                { id: 'b1', name: 'Refrigerante Lata', price: 6 },
+                { id: 'b2', name: 'Água Mineral', price: 4 },
+                { id: 'b3', name: 'Suco Natural', price: 10 }
             ],
             extras: [
-                { id: 'e1', name: 'Borda de Chocolate', img: 'extra-choc.png', desc: 'Adicional de borda recheada.', price: 15 },
-                { id: 'e2', name: 'Borda de Catupiry', img: 'extra-cat.png', desc: 'Adicional de borda recheada.', price: 12 }
+                { id: 'e1', name: 'Borda de Chocolate', price: 15 },
+                { id: 'e2', name: 'Borda de Catupiry', price: 12 }
             ]
         };
 
         // === ESTADO ===
         let cart = [];
-        let selectedSizes = {}; // Armazena tamanho selecionado para cada ID de pizza salgada
+        // Inicializa tamanhos padrão (8 fatias) para todas as pizzas salgadas
+        let selectedSizes = {
+            's1': 8, 's2': 8, 's3': 8, 's4': 8
+        };
 
         // === UTILITÁRIOS ===
         
@@ -334,82 +565,6 @@
             parent.appendChild(fallback);
         }
 
-        // === RENDERIZAÇÃO ===
-        
-        // Render Pizzas Salgadas (Com seletor de tamanho)
-        const containerSalgadas = document.getElementById('container-salgadas');
-        menu.salgadas.forEach(item => {
-            // Default size 8
-            selectedSizes[item.id] = 8;
-            
-            const card = document.createElement('div');
-            card.className = "snap-child min-w-[280px] w-[280px] md:min-w-[320px] bg-white rounded-2xl shadow-md overflow-hidden flex flex-col border border-gray-100";
-            card.innerHTML = `
-                <div class="h-40 bg-gray-200 relative overflow-hidden group">
-                    <img src="${item.img}" alt="${item.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="handleImageError(this)">
-                    <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-3 pt-8">
-                        <h3 class="text-white font-display font-bold text-lg leading-tight shadow-black drop-shadow-md">${item.name}</h3>
-                    </div>
-                </div>
-                <div class="p-4 flex flex-col flex-1 justify-between">
-                    <p class="text-xs text-gray-500 mb-3 h-8 overflow-hidden">${item.desc}</p>
-                    
-                    <!-- Size Selector -->
-                    <div class="flex bg-gray-100 rounded-lg p-1 mb-3 justify-between">
-                        ${[8, 10, 12].map(size => `
-                            <button onclick="changeSize('${item.id}', ${size}, this)" 
-                                class="flex-1 py-1 text-xs font-bold rounded-md transition-all ${size === 8 ? 'bg-white shadow text-brand-red' : 'text-gray-400 hover:text-gray-600'}">
-                                ${size} fat.
-                            </button>
-                        `).join('')}
-                    </div>
-
-                    <div class="flex items-center justify-between mt-1">
-                        <div class="flex flex-col">
-                            <span class="text-[10px] text-gray-400 font-bold uppercase">Preço</span>
-                            <span id="price-${item.id}" class="text-xl font-bold text-gray-800">R$ ${item.prices[8].toFixed(2).replace('.',',')}</span>
-                        </div>
-                        <button onclick="addSalgadaToCart('${item.id}')" class="bg-brand-red hover:bg-red-700 text-white p-2 rounded-full shadow-lg transition-transform active:scale-90">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            `;
-            containerSalgadas.appendChild(card);
-        });
-
-        // Helper para renderizar items simples
-        function renderSimpleSection(containerId, items, type) {
-            const container = document.getElementById(containerId);
-            items.forEach(item => {
-                const card = document.createElement('div');
-                card.className = "snap-child min-w-[240px] w-[240px] md:min-w-[260px] bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col border border-gray-100";
-                card.innerHTML = `
-                    <div class="h-32 bg-gray-200 relative overflow-hidden group">
-                        <img src="${item.img}" alt="${item.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="handleImageError(this)">
-                    </div>
-                    <div class="p-3 flex flex-col flex-1">
-                        <h3 class="font-bold text-gray-800 text-base leading-tight mb-1">${item.name}</h3>
-                        ${item.desc ? `<p class="text-[10px] text-gray-500 mb-2">${item.desc}</p>` : ''}
-                        
-                        <div class="mt-auto flex items-center justify-between pt-2">
-                            <span class="text-lg font-bold text-brand-red">R$ ${item.price.toFixed(2).replace('.',',')}</span>
-                            <button onclick="addSimpleToCart('${type}', '${item.id}')" class="text-brand-red bg-red-50 hover:bg-brand-red hover:text-white border border-red-100 p-1.5 rounded-lg transition-colors">
-                                <span class="text-xs font-bold uppercase px-1">Adicionar</span>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        renderSimpleSection('container-doces', menu.doces, 'doces');
-        renderSimpleSection('container-bebidas', menu.bebidas, 'bebidas');
-        renderSimpleSection('container-extras', menu.extras, 'extras');
-
         // === LÓGICA DO APP ===
 
         function changeSize(itemId, size, btn) {
@@ -424,9 +579,9 @@
             const parent = btn.parentElement;
             Array.from(parent.children).forEach(b => {
                 b.classList.remove('bg-white', 'shadow', 'text-brand-red');
-                b.classList.add('text-gray-400');
+                b.classList.add('text-gray-400', 'hover:text-gray-600');
             });
-            btn.classList.remove('text-gray-400');
+            btn.classList.remove('text-gray-400', 'hover:text-gray-600');
             btn.classList.add('bg-white', 'shadow', 'text-brand-red');
         }
 
